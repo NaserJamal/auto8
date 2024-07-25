@@ -2,7 +2,6 @@ import pygame
 import random
 
 
-# snake_game
 class SnakeGame:
     def __init__(self, width=640, height=480):
         self.width = width

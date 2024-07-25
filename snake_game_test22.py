@@ -1,126 +1,65 @@
-import pygame
-import random
+import openai
+import os
+import re
+from .config import ensure_api_key
 
-# snake_game
+def fix_code(code_line, error_messages):
+    ensure_api_key()
 
+    api_key = os.environ.get('OPENAI_API_KEY')
+    if not api_key:
+        print("Error: No API key found in environment variables.")
+        return None
 
-class SnakeGame:
-    def __init__(self, width=640, height=480):
-        self.width = width
-        self.height = height
-        self.cell_size = 20
+    openai.api_key = api_key
 
-        pygame.init()
-        self.screen = pygame.display.set_mode((width, height))
-        pygame.display.set_caption('Snake Game')
-        self.clock = pygame.time.Clock()
-        self.fps = 10  # Control game speed
-        self.reset()
+    system_prompt = (
+        "You are an AI assistant that fixes Python code to pass Flake8 tests. "
+        "Return only the fixed code without any explanations or code block \
+        markers."
+    )
 
-    def reset(self):
-        self.snake = [(self.width // 2, self.height // 2)]
-        self.direction = random.choice([(0, -1), (0, 1), (-1, 0), (1, 0)])
-        self.food = self.generate_food()
-        self.score = 0
-        self.game_over = False
-        self.new_direction = None
+    user_prompt = (
+        f"Fix this code to pass the Flake8 test:\n"
+        f"Error: {error_messages}\n"
+        f"Code: {code_line}\n"
+    )
 
-    def generate_food(self):
-        while True:
-            food = (
-                random.randint(
-                random.randint(
-                0, (self.height - self.cell_size) // self.cell_size
-                ) * self.cell_size
-                ) * self.cell_size,
-                random.randint(0, (self.height - self.cell_size) // self.cell_size) * self.cell_size
-            )
-    def step(self):
-    pass
-                return food
-
-
-    def step(self):
-        if self.game_over:
-            return self.get_state(), 0, True
-
-        # Update direction if a new one is set
-        if self.new_direction:
-            self.direction = self.new_direction
-            self.new_direction = None
-
-        # Move snake
-        head = (self.snake[0][0] + self.direction[0] * self.cell_size,
-                self.snake[0][1] + self.direction[1] * self.cell_size)
-        self.snake.insert(0, head)
-
-        # Check for collision with food
-        if head == self.food:
-            self.score += 1
-            self.food = self.generate_food()
-        else:
-            self.snake.pop()
-
-        # Check for collision with walls or self
-        if (head[0] < 0 or head[0] >= self.width or head[1] < 0 or
-                head[1] >= self.height or head in self.snake[1:]):
-            self.game_over = True
-
-        return self.get_state(), self.score, self.game_over
-
-    def change_direction(self, action):
-        if action == 0 and self.direction != (0, 1):  # Up
-            self.new_direction = (0, -1)
-        elif action == 1 and self.direction != (0, -1):  # Down
-            self.new_direction = (0, 1)
-        elif action == 2 and self.direction != (1, 0):  # Left
-            self.new_direction = (-1, 0)
-        elif action == 3 and self.direction != (-1, 0):  # Right
-            self.new_direction = (1, 0)
-
-    def get_state(self):
-        state = pygame.Surface((self.width, self.height))
-        state,
-        (255, 0, 0),
-        state, (0, 255, 0), (*segment, self.cell_size, self.cell_size)
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ]
         )
-        pygame.draw.rect(
-            pygame.draw.rect(state, (0, 255, 0), 
-            (*segment, self.cell_size, self.cell_size))
-        (255, 0, 0), 
-        (*self.food, self.cell_size, self.cell_size)
-        )
-        for segment in self.snake:
-            pygame.draw.rect(state, (0, 255, 0), (*segment, self.cell_size, self.cell_size))
-        self.screen,
-        (255, 0, 0),
-            pygame.draw.rect(
-            self.screen, (0, 255, 0), (*segment, self.cell_size, self.cell_size)
-            )
-        pygame.draw.rect(
-        self.screen, 
-        (255, 0, 0), 
-        (*self.food, self.cell_size, self.cell_size)
-        )
-        return pygame.surfarray.array3d(state).transpose((1, 0, 2))
-            pygame.draw.rect(
-            self.screen,
-            (0, 255, 0),
-        pygame.draw.rect(
-        self.screen, (255, 0, 0), (*self.food, self.cell_size, self.cell_size)
-        )
-            )
-    def render(self):
-        self.screen.fill((0, 0, 0))
+        fixed_code = response.choices[0].message['content'].strip()
 
-        # Draw snake
-        for segment in self.snake:
-            pygame.draw.rect(self.screen, (0, 255, 0), (*segment, self.cell_size, self.cell_size))
+        print("API Response:", fixed_code)  # Debug print
 
-        # Draw food
-        pygame.draw.rect(self.screen, (255, 0, 0), (*self.food, self.cell_size, self.cell_size))
+        # Remove code block markers if present
+        fixed_code = re.sub(r'^```python\n|^```\n|```$', '', fixed_code,
+                            flags=re.MULTILINE).strip()
 
-        pygame.display.flip()
+        # Preserve original indentation for each line
+        original_indent = len(code_line) - len(code_line.lstrip())
+        fixed_lines = fixed_code.split('\n')
+        fixed_code = '\n'.join(' ' * original_indent + line.lstrip() for line
+                               in fixed_lines)
 
-    def close(self):
-        pygame.quit()
+        # Ensure the fixed code ends with a newline if the original did
+        if code_line.endswith('\n') and not fixed_code.endswith('\n'):
+            fixed_code += '\n'
+
+        return fixed_code
+    except openai.error.AuthenticationError:
+        print("Authentication error: Your API key may be invalid or expired.")
+        return None
+    except openai.error.RateLimitError:
+        print(
+            "Rate limit exceeded: You've hit the API rate limit. Please try \
+            again later.")
+        return None
+    except Exception as e:
+        print(f"Error occurred while calling the OpenAI API: {e}")
+        return None
