@@ -108,6 +108,5 @@ class SnakeGame:
 
         pygame.display.flip()
 
-
     def close(self):
         pygame.quit()
