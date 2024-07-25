@@ -1,6 +1,6 @@
-# Auto8
+# auto8
 
-Auto8 is a tool that automatically fixes flake8 issues in your Python code.
+auto8 is a tool that automatically fixes flake8 issues in your Python code.
 
 ## Installation
 

@@ -1,9 +1,6 @@
-# auto8/auto8/main.py
-
 import subprocess
 import re
 import sys
-from pathlib import Path
 from auto8.fixers import (
     e501_line_too_long,
     w292_no_newline_at_eof,
@@ -12,6 +9,7 @@ from auto8.fixers import (
     w293_blank_line_whitespace,
     e128_continuation_line_under_indented
 )
+
 def run_flake8(file_path=None):
     command = ['flake8']
     if file_path:
@@ -36,6 +34,7 @@ def parse_flake8_output(output):
     return issues
 
 def fix_issues(issues):
+    fixed_count = 0
     for issue in issues:
         if issue['error_code'] == 'E501':
             e501_line_too_long.fix(issue['file_path'], issue['line_num'])
@@ -49,18 +48,39 @@ def fix_issues(issues):
             w293_blank_line_whitespace.fix(issue['file_path'], issue['line_num'])
         elif issue['error_code'] == 'E128':
             e128_continuation_line_under_indented.fix(issue['file_path'], issue['line_num'])
-        # Add more fixers for other error codes
+        else:
+            continue
+        fixed_count += 1
+    return fixed_count
 
 def main():
     if len(sys.argv) > 1:
         file_path = sys.argv[1]
-        flake8_output = run_flake8(file_path)
     else:
-        flake8_output = run_flake8()
-    
-    issues = parse_flake8_output(flake8_output)
-    fix_issues(issues)
-    print("Auto8 has completed fixing the issues.")
+        file_path = None
+
+    max_iterations = 5
+    iteration = 0
+    total_fixes = 0
+
+    while iteration < max_iterations:
+        flake8_output = run_flake8(file_path)
+        issues = parse_flake8_output(flake8_output)
+        
+        if not issues:
+            break
+
+        fixes_made = fix_issues(issues)
+        total_fixes += fixes_made
+        
+        if fixes_made == 0:
+            break
+
+        iteration += 1
+
+    print(f"Auto8 has completed fixing issues. Total fixes made: {total_fixes}")
+    if iteration == max_iterations:
+        print("Maximum number of iterations reached. Some issues may remain.")
 
 if __name__ == '__main__':
     main()
