@@ -62,7 +62,7 @@ def main():
     else:
         file_path = None
 
-    max_iterations = 5
+    max_iterations = 7
     iteration = 0
     total_fixes = 0
 

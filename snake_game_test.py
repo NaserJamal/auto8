@@ -27,8 +27,10 @@ class SnakeGame:
 
     def generate_food(self):
         while True:
-            food = (random.randint(0, (self.width - self.cell_size) // self.cell_size) * self.cell_size,
-                    random.randint(0, (self.height - self.cell_size) // self.cell_size) * self.cell_size)
+            food = (random.randint(0, (self.width - self.cell_size) //
+                                   self.cell_size) * self.cell_size,
+                    random.randint(0, (self.height - self.cell_size) //
+                    self.cell_size) * self.cell_size)
             if food not in self.snake:
                 return food
 
@@ -76,10 +78,12 @@ class SnakeGame:
 
         # Draw snake
         for segment in self.snake:
-            pygame.draw.rect(state, (0, 255, 0), (*segment, self.cell_size, self.cell_size))
+            pygame.draw.rect(state, (0, 255, 0), (*segment, self.cell_size,
+                             self.cell_size))
 
         # Draw food
-        pygame.draw.rect(state, (255, 0, 0), (*self.food, self.cell_size, self.cell_size))
+        pygame.draw.rect(state, (255, 0, 0), (*self.food, self.cell_size,
+                         self.cell_size))
 
         return pygame.surfarray.array3d(state).transpose((1, 0, 2))
 
@@ -88,10 +92,12 @@ class SnakeGame:
 
         # Draw snake
         for segment in self.snake:
-            pygame.draw.rect(self.screen, (0, 255, 0), (*segment, self.cell_size, self.cell_size))
+            pygame.draw.rect(self.screen, (0, 255, 0), (*segment,
+                             self.cell_size, self.cell_size))
 
         # Draw food
-        pygame.draw.rect(self.screen, (255, 0, 0), (*self.food, self.cell_size, self.cell_size))
+        pygame.draw.rect(self.screen, (255, 0, 0), (*self.food,
+                         self.cell_size, self.cell_size))
 
         pygame.display.flip()
 
