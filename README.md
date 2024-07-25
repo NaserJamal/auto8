@@ -16,6 +16,12 @@ Run `auto8` in your project directory:
 auto8
 ```
 
+Run `auto8` on a file:
+
+```python
+auto8 example.py
+```
+
 This will run flake8 and attempt to fix the issues it finds.
 
 ## Note
