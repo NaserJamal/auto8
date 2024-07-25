@@ -1,0 +1,13 @@
+README.md
+setup.py
+auto8/__init__.py
+auto8/main.py
+auto8.egg-info/PKG-INFO
+auto8.egg-info/SOURCES.txt
+auto8.egg-info/dependency_links.txt
+auto8.egg-info/entry_points.txt
+auto8.egg-info/requires.txt
+auto8.egg-info/top_level.txt
+auto8/fixers/__init__.py
+auto8/fixers/e501_line_too_long.py
+auto8/fixers/w292_no_newline_at_eof.py
