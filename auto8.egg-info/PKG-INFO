@@ -12,9 +12,9 @@ Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
 Description-Content-Type: text/markdown
 
-# Auto8
+# auto8
 
-Auto8 is a tool that automatically fixes flake8 issues in your Python code.
+auto8 is a tool that automatically fixes flake8 issues in your Python code.
 
 ## Installation
 
@@ -37,5 +37,6 @@ This will run flake8 and attempt to fix the issues it finds.
 Automatically fixing code can sometimes lead to unexpected results. Always review the changes and run tests after using auto8.
 
 requirements.txt:
-flake8==3.9.2
+
+flake8==3.9.2 or above
 
