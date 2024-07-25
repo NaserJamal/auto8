@@ -1,4 +1,3 @@
-import os
 from collections import defaultdict
 from .flake8_runner import run_flake8
 from .gpt_fixer import fix_code

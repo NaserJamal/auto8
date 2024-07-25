@@ -9,7 +9,8 @@ from auto8.fixers import (
     w293_blank_line_whitespace,
     e128_continuation_line_under_indented,
     e303_too_many_blank_lines,
-    e302_expected_two_blank_lines
+    e302_expected_two_blank_lines,
+    f401_unused_import
 )
 
 def run_flake8(file_path=None):
@@ -54,6 +55,8 @@ def fix_issues(issues):
             e303_too_many_blank_lines.fix(issue['file_path'], issue['line_num'])
         elif issue['error_code'] == 'E302':
             e302_expected_two_blank_lines.fix(issue['file_path'], issue['line_num'])
+        elif issue['error_code'] == 'F401':
+            f401_unused_import.fix(issue['file_path'], issue['line_num'])
         else:
             continue
         fixed_count += 1
