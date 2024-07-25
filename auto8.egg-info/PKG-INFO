@@ -11,6 +11,7 @@ Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
 Description-Content-Type: text/markdown
+License-File: LICENSE
 
 # auto8
 
@@ -28,6 +29,12 @@ Run `auto8` in your project directory:
 
 ```python
 auto8
+```
+
+Run `auto8` on a file:
+
+```python
+auto8 example.py
 ```
 
 This will run flake8 and attempt to fix the issues it finds.
