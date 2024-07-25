@@ -3,6 +3,7 @@ import os
 import re
 from .config import ensure_api_key
 
+
 def fix_code(code_line, error_messages):
     ensure_api_key()
 
@@ -14,9 +15,8 @@ def fix_code(code_line, error_messages):
     openai.api_key = api_key
 
     system_prompt = (
-        "You are an AI assistant that fixes Python code to pass Flake8 tests. "
-        "Return only the fixed code without any explanations or code block \
-        markers."
+        "You are an AI assistant that fixes Python code to pass Flake8 tests."
+        "Return only the fixed code without any explanations or code block markers."
     )
 
     user_prompt = (
@@ -38,27 +38,25 @@ def fix_code(code_line, error_messages):
         print("API Response:", fixed_code)  # Debug print
 
         # Remove code block markers if present
-        fixed_code = re.sub(r'^```python\n|^```\n|```$', '', fixed_code,
-                            flags=re.MULTILINE).strip()
-
+        fixed_code = re.sub(r'^```python\n|^```\n|```$', '', fixed_code, flags=re.MULTILINE).strip()
+        
         # Preserve original indentation for each line
-        original_indent = len(code_line) - len(code_line.lstrip())
+        original_indent = len(
+            code_line) - len(code_line.lstrip())
         fixed_lines = fixed_code.split('\n')
-        fixed_code = '\n'.join(' ' * original_indent + line.lstrip() for line
-                               in fixed_lines)
-
+        fixed_code = '\n'.join(' ' * original_indent + line.lstrip() for line in fixed_lines)
+        
         # Ensure the fixed code ends with a newline if the original did
         if code_line.endswith('\n') and not fixed_code.endswith('\n'):
             fixed_code += '\n'
-
+        
         return fixed_code
     except openai.error.AuthenticationError:
-        print("Authentication error: Your API key may be invalid or expired.")
+        print(
+            "Authentication error: Your API key may be invalid or expired.")
         return None
     except openai.error.RateLimitError:
-        print(
-            "Rate limit exceeded: You've hit the API rate limit. Please try \
-            again later.")
+        print("Rate limit exceeded: You've hit the API rate limit. Please try again later.")
         return None
     except Exception as e:
         print(f"Error occurred while calling the OpenAI API: {e}")
