@@ -9,7 +9,8 @@ from auto8.fixers import (
     w292_no_newline_at_eof,
     e502_redundant_backslash,
     w291_trailing_whitespace,
-    w293_blank_line_whitespace
+    w293_blank_line_whitespace,
+    e128_continuation_line_under_indented
 )
 def run_flake8(file_path=None):
     command = ['flake8']
@@ -46,6 +47,8 @@ def fix_issues(issues):
             w291_trailing_whitespace.fix(issue['file_path'], issue['line_num'])
         elif issue['error_code'] == 'W293':
             w293_blank_line_whitespace.fix(issue['file_path'], issue['line_num'])
+        elif issue['error_code'] == 'E128':
+            e128_continuation_line_under_indented.fix(issue['file_path'], issue['line_num'])
         # Add more fixers for other error codes
 
 def main():
