@@ -9,14 +9,14 @@ def fix(file_path, line_num):
         original_line = lines[line_num - 1].rstrip('\n')
         indent = len(original_line) - len(original_line.lstrip())
         
-        # New case: Check for long string literals
-        string_match = re.match(r'(\s*)(["\'])(.*)\2\s*$', original_line)
-        if string_match and len(original_line) > 79:
-            indent_str, quote, content = string_match.groups()
-            max_line_length = 79 - len(indent_str) - 1  # -1 for the backslash
+        # New case: Check for long print statements
+        print_match = re.match(r'(\s*)(print\(")(.*)("\))\s*$', original_line)
+        if print_match and len(original_line) > 79:
+            indent_str, print_start, content, print_end = print_match.groups()
+            max_line_length = 79 - len(indent_str) - len(print_start) - 1  # -1 for the backslash
             
             new_lines = []
-            current_line = indent_str + quote
+            current_line = indent_str + print_start
             
             words = content.split()
             for word in words:
@@ -24,15 +24,15 @@ def fix(file_path, line_num):
                     current_line += word + ' '
                 else:
                     new_lines.append(current_line.rstrip() + ' \\')
-                    current_line = indent_str
+                    current_line = indent_str + ' ' * (len(print_start) - 1)  # Align with opening quote
                     current_line += word + ' '
             
-            new_lines.append(current_line.rstrip() + quote)
+            new_lines.append(current_line.rstrip() + print_end)
             
             lines[line_num - 1:line_num] = [line + '\n' for line in new_lines]
         
-        # Existing cases
-        elif re.match(r'^(\s*)(.+?=\s*)(.+)$', original_line) and len(original_line) > 79:
+        # Existing cases for string literals
+        elif re.match(r'(\s*)(["\'])(.*)\2\s*$', original_line) and len(original_line) > 79:
             # Handle simple assignment case
             before_eq, eq_part, after_eq = re.match(r'^(\s*)(.+?=\s*)(.+)$', original_line).groups()
             new_lines = [
