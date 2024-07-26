@@ -7,3 +7,4 @@ from . import e128_continuation_line_under_indented
 from . import e303_too_many_blank_lines
 from . import e302_expected_two_blank_lines
 from . import f401_unused_import
+from . import e127_continuation_line_over_indented

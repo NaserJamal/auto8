@@ -13,6 +13,7 @@ auto8.egg-info/top_level.txt
 auto8/__pycache__/__init__.cpython-310.pyc
 auto8/__pycache__/main.cpython-310.pyc
 auto8/fixers/__init__.py
+auto8/fixers/e127_continuation_line_over_indented.py
 auto8/fixers/e128_continuation_line_under_indented.py
 auto8/fixers/e302_expected_two_blank_lines.py
 auto8/fixers/e303_too_many_blank_lines.py
